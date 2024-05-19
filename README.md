@@ -15,10 +15,10 @@ The Budget Application is designed to help users manage their finances effective
 ## How to Use
 
 ### Setting Up
-1. **Open the Application:** Access the application through your web browser by opening `index.html`.
+1. **Open the Application:** Access the application through your web browser by opening https://seraprogrammer1.github.io/GI9/.
 
 ### Adding Folders and Items
-1. **Add Main Folders:** The application starts with two main folders: Income and Expense.
+1. **Main Folders:** The application has two main folders: Income and Expense.
 2. **Add Subfolders:**
    - Select a folder from the Explorer.
    - Click the **+** button next to the search bar.
@@ -26,19 +26,19 @@ The Budget Application is designed to help users manage their finances effective
    - **Note:** You can only create subfolders up to two levels deep.
 3. **Add Items:**
    - Select a folder from the Explorer.
-   - Fill in the **Name**, **Amount**, and **Description** fields in the right container.
+   - Fill in the **Name**, **Amount**, and **Description** fields.
    - Click the **Enter** button.
    - Items will appear in the selected folder with their details.
 
 ### Navigation and Interaction
-- **Select Folders/Items:** Click on the folder or item name to select it. Selected elements are highlighted.
+- **Select Folders:** Click on the folder to select it. Selected elements are highlighted.
 - **Hide/Show Subfolders:** Click the arrow button next to a folder to collapse or expand it.
 - **Remove Folders/Items:** Click the **-** button next to a folder or item to remove it.
-- **Search:** Use the search bar at the top of the Explorer to find specific folders or items.
+- **Search:** Use the search bar at the top of the Explorer to find specific folders or items. (Development)
 
 ### Balance Management
 - **Balance Calculation:** The total balance is updated automatically based on the amounts in the Income and Expense folders.
-- **View Balance:** The balance is displayed in the middle container under "Balance".
+- **View Balance:** The balance is displayed in the under word "Budget".
 
 ### Validation
 - Ensure all fields (Name, Amount, Description) are filled before adding an item.
