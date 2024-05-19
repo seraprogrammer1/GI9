@@ -43,12 +43,3 @@ The Budget Application is designed to help users manage their finances effective
 ### Validation
 - Ensure all fields (Name, Amount, Description) are filled before adding an item.
 - Fields will be highlighted in red if they are empty when trying to add an item.
-
-## Customization
-- **Modify Folders and Items:** Edit the code in `app.js` to change how folders and items are created and managed.
-- **Styling:** Update `style.css` to change the appearance of the application.
-
-## Files
-- `index.html:` Main HTML file.
-- `app.js:` JavaScript file for application logic.
-- `style.css:` CSS file for styling the application.
