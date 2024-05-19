@@ -1,5 +1,7 @@
 <h1>Budget Application</h1>
 
+Search Bar in development
+
 Overview
 This budget application helps users manage their finances by categorizing income and expenses into various folders. It features an Explorer section for organizing budget categories and a display section for tracking balances.
 
