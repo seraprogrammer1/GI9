@@ -44,6 +44,9 @@ $selectBorderHover: rgba(47, 227, 255, 0.7);
 .hide {
     display: none;
 }
+.search_hide {
+    display: none;
+}
 .selected {
     background-color: $selectBg;
     border: 1px solid $selectBorder;

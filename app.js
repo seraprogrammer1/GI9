@@ -1,6 +1,7 @@
 // Explorer
 const budget_type = document.getElementById("budget_type");
 const search_bar = document.getElementById("search_bar");
+let search_hides = document.querySelectorAll('.search_hide')
 const add_button = document.getElementById("add_button");
 
 const middle_container = document.getElementById('middle-container');
@@ -23,12 +24,8 @@ class Budget {
 
         let _selected = undefined;
         // object the holds all mainFolders and there children
-        // also has a way to get the root _Explorer so the buttonSetup and set the selected folder
-        let _objects = {
-            get root(){
-                return _Explorer
-            }
-        };
+        let _objects = {};
+        let _hidden = []
 
         let _balance = {
 
@@ -80,11 +77,21 @@ class Budget {
             get explorerFolder() {
                 return _objects
             },
-            // adds to the encapsulated _object that holds all MainFolders
-            // set explorerFolder(value) {
-            //     console.log(value)
-            //     _objects.push(value)
-            // },
+            get hidden() {
+                return _hidden
+            }
+            ,
+            resetHidden(){
+                _hidden = [];
+            }
+            ,
+            hide(){
+                _hidden.forEach(element => {
+                    if (!element.classList.contains('search_hide')){
+                        element.classList.add('search_hide')
+                    }
+                })
+            },
             // get the MainFolder from a path
             getMainFolder(path){
                return _objects[path.split('/')[0]]
@@ -126,7 +133,7 @@ class Budget {
 
         // creates the main folders from the MainFolders Array
         MainFolders.forEach((folder) => {
-            const newMainFolder = new MainFolder(folder.name, _Explorer.explorerFolder,folder.operator)
+            const newMainFolder = new MainFolder(folder.name, _Explorer.explorerFolder,folder.operator, _Explorer)
         })
 
         // adds folders to the selected folder
@@ -150,7 +157,28 @@ class Budget {
                 }
             }
         })
-        
+
+        // removes Explorer element base on search bar input value
+        function searchInputChange(){
+
+            search_hides = document.querySelectorAll('.search_hide')
+
+            search_hides.forEach(element => {
+                element.classList.remove("search_hide");
+            })
+
+            if(search_bar.value != ""){
+                _Explorer.resetHidden();
+                for (let [key, folder] of Object.entries(_objects)){
+                        folder.findSearch()
+                        _Explorer.hide()
+                }
+            }
+        }
+
+        search_bar.addEventListener('keyup', searchInputChange);
+        search_bar.addEventListener('keydown', searchInputChange);
+
         // adds items to the selected folder
         // has validation only with add if requirements are met
         enter_button.addEventListener('click', () => {
@@ -198,8 +226,10 @@ class Budget {
 
 class MainFolder {
 
+    #items = [];
+
     // adds all key properties
-    constructor(name, parent, operator) {
+    constructor(name, parent, operator, root) {
         this.operator = operator;
         if (operator != "-" && operator != "+"){
             console.error("invalid Operator only + or - allowed")
@@ -208,10 +238,9 @@ class MainFolder {
         
         this.name = name;
         this.amount = 0;
-        this.items = [];
         this.parent = parent;
         this.path = `${name}`
-        this.root = this.parent.root;
+        this.root = root;
 
         this.element;
         this.addButton;
@@ -219,10 +248,11 @@ class MainFolder {
         this.arrowButton;
         this.div;
         this.option;
-
+        
         this.selectedElement;
-
+        
         this.nameList = []
+        this.search;
 
         this.parent[this.name] = this;
 
@@ -242,18 +272,41 @@ class MainFolder {
 
             this.items.forEach(element => {
                 console.log(this.name, this.amount)
-                if (element instanceof Folder){
-                    this.amount = element.findAmounts(this.amount)
-                }
-                if (element instanceof Item){
-                    this.amount = element.findAmounts(this.amount)
-                }
+                this.amount = element.findAmounts(this.amount)
             });
             this.num.innerHTML = this.amount;
-            console.log(this)
-            console.log(typeof this.amount)
             return this.amount
-         }
+        }
+        // find items and folders and puts them in an array 
+        this.findSearch = function(value){
+
+            let passed = false
+
+            this.items.forEach(element => {
+                if (element.findSearch(passed)){
+                    passed = true;
+                }
+            });
+
+            const l = search_bar.value.length;
+            const v = search_bar.value;
+            
+            if (this.name.substring(0,l).toLowerCase() === v.toLowerCase()){
+                passed = true;
+            }
+
+            return passed
+        }
+    }
+
+    // gives the items but also check how many items a folder has to hide or show arrow
+    get items(){
+        if(this.#items.length < 1){
+            this.arrowButton.classList.add('hide')
+        } else {
+            this.arrowButton.classList.remove('hide')
+        }
+        return this.#items;
     }
 
     //sets up button functions
@@ -305,7 +358,7 @@ class MainFolder {
          `
          <span>
              <p>${this.name}</p>
-             <button class="arrow"><i class="fa-solid fa-chevron-down"></i></button>
+             <button class="arrow hide"><i class="fa-solid fa-chevron-down"></i></button>
          </span>
          <div>
  
@@ -314,13 +367,16 @@ class MainFolder {
          this.element = newFolderElement;
          this.buttonSetup();
          this.createDisplay()
-     }
+    }
 }
 class Folder {
+
+    #items = [];
+
      // adds all key properties
     constructor(name, parent) {
         this.name = name;
-        this.items = [];
+
         this.parent = parent;
         this.path = `${this.parent.path}/${name}`
 
@@ -333,6 +389,7 @@ class Folder {
         this.selectedElement;
 
         this.nameList = []
+        this.search;
 
         this.parent.items.push(this);
 
@@ -341,22 +398,53 @@ class Folder {
         this.createElement()
         this.parent.items[this.index] = this;
 
-
+         // find item values within it self to get main amount and returns it
         this.findAmounts = function(value){
 
             this.amount = 0;
 
             this.items.forEach(element => {
-                if (element instanceof Folder){
-                    this.amount = element.findAmounts(this.amount)
-                }
-                if (element instanceof Item){
-                    this.amount = element.findAmounts(this.amount)
-                }
+                this.amount = element.findAmounts(this.amount)
             });
             return value + this.amount
         }
+         // find items and folders and puts them in an array 
+        this.findSearch = function(value){
+
+            this.search = false
+
+            this.items.forEach(element => {
+                if (element.findSearch(this.search)){
+                    this.search = true;
+                }
+            });
+            
+            const l = search_bar.value.length;
+            const v = search_bar.value;
+            
+            console.log(this.name.substring(0,l).toLowerCase(), v.toLowerCase(), this.name.substring(0,l).toLowerCase() === v.toLowerCase())
+
+            if (this.name.substring(0,l).toLowerCase() === v.toLowerCase()){
+                this.search = true;
+            }
+
+            if (!this.search){
+                this.root.hidden.push(this.element)
+            }
+
+            return this.search
+        }
     }
+    // gives the items but also check how many items a folder has to hide or show arrow
+    get items(){
+        if(this.#items.length < 1){
+            this.arrowButton.classList.add('hide')
+        } else {
+            this.arrowButton.classList.remove('hide')
+        }
+        return this.#items;
+    }
+
     //sets up button functions
     buttonSetup(){
 
@@ -405,7 +493,7 @@ class Folder {
          <span>
              <p>${this.name}</p>
              <button class="minus">-</button>
-             <button class="arrow"><i class="fa-solid fa-chevron-down"></i></button>
+             <button class="arrow hide"><i class="fa-solid fa-chevron-down"></i></button>
          </span>
          <div>
  
@@ -424,6 +512,7 @@ class Item {
         this.description = description;
         this.parent = parent;
         this.path = `${this.parent.path}/${name}`
+        this.root = this.parent.root;
 
         this.element;
         this.minusButton;
@@ -433,6 +522,7 @@ class Item {
         this.selectedElement;
 
         this.nameList = []
+        this.search;
 
         this.parent.items.push(this);
 
@@ -441,9 +531,28 @@ class Item {
         this.createElement()
         this.parent.items[this.index] = this;
 
+         // find item values within it self to get main amount and returns it
         this.findAmounts = function(value) {
             return value + this.amount
-         }
+        }
+         // find items and folders and puts them in an array 
+        this.findSearch = function(value){
+
+            this.search = false
+
+            const l = search_bar.value.length;
+            const v = search_bar.value;
+
+            if (this.name.substring(0,l).toLowerCase() == v.toLowerCase()){
+                this.search = true;
+            }
+
+            if (!this.search){
+                this.root.hidden.push(this.element)
+            }
+
+            return this.search;
+        }
     }
     //sets up button functions
     buttonSetup(){
