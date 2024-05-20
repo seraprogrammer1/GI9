@@ -60,7 +60,6 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
   background: linear-gradient(120deg, lightblue, lightblue, lightcoral, lightcoral, rgb(255, 187, 0), rgb(255, 187, 0));
 }
 
@@ -213,8 +212,10 @@ main {
   #budget-container {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    height: 100%;
+    max-height: 700px;
     width: 650px;
+    overflow: auto;
   }
   #budget-container #top-container {
     display: flex;
