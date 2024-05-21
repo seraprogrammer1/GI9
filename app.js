@@ -241,18 +241,8 @@ class MainFolder {
         this.parent = parent;
         this.path = `${name}`
         this.root = root;
-
-        this.element;
-        this.addButton;
-        this.minusButton;
-        this.arrowButton;
-        this.div;
-        this.option;
-        
-        this.selectedElement;
         
         this.nameList = []
-        this.search;
 
         this.parent[this.name] = this;
 
@@ -379,18 +369,9 @@ class Folder {
 
         this.parent = parent;
         this.path = `${this.parent.path}/${name}`
-
-        this.element;
-        this.minusButton;
-        this.arrowButton;
-        this.div;
         this.root = this.parent.root;
 
-        this.selectedElement;
-
         this.nameList = []
-        this.search;
-
         this.parent.items.push(this);
 
         this.index =  this.parent.items.indexOf(this)
@@ -422,8 +403,6 @@ class Folder {
             const l = search_bar.value.length;
             const v = search_bar.value;
             
-            console.log(this.name.substring(0,l).toLowerCase(), v.toLowerCase(), this.name.substring(0,l).toLowerCase() === v.toLowerCase())
-
             if (this.name.substring(0,l).toLowerCase() === v.toLowerCase()){
                 this.search = true;
             }
@@ -513,16 +492,7 @@ class Item {
         this.parent = parent;
         this.path = `${this.parent.path}/${name}`
         this.root = this.parent.root;
-
-        this.element;
-        this.minusButton;
-        this.arrowButton;
-        this.div;
-
-        this.selectedElement;
-
         this.nameList = []
-        this.search;
 
         this.parent.items.push(this);
 
